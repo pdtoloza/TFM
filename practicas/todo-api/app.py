@@ -1,5 +1,6 @@
 #!flask/bin/python
 from flask import Flask, jsonify 
+from flask import render_template
 from flask import abort
 from flask import make_response
 from flask import request
@@ -20,6 +21,24 @@ tasks = [
 		'done': False
 	}
 ]
+@app.route('/')
+def index():
+	return render_template("boot.html")
+
+@app.route('/todo/api/v1.0/query', methods = ['GET'])
+def get_query():
+	query = request.args.get('query', '')
+ 	return jsonify({ 'result': query })
+
+
+@app.route('/todo/api/v1.0/query.xml', methods = ['GET'])
+def get_query_xml():
+	# query = request.args.get('query', '')
+	paths = render_template("paths.xml", paths = range(5))
+	response = make_response(paths)
+	response.headers["Content-Type"] = "application/xml" 
+ 	return response
+
 
 @app.route('/todo/api/v1.0/tasks', methods = ['GET'])
 def get_tasks():

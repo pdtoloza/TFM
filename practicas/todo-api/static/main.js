@@ -70,9 +70,9 @@ function init(json){
 	mergeGraphs(json.nodes, json.links);
 	force.nodes(nodes)
 		.links(links)
-		.gravity(0.2)
-		.distance(200)
-		.charge(-2000)
+		.gravity(0.1)
+		.distance(20)
+		.charge(-1000)
 		.linkDistance(100)
 		.size([w, h])
 		.start();
@@ -197,33 +197,33 @@ function init(json){
 				angle = Math.atan2(d.target.y-d.source.y, d.target.x-d.source.x)*180/Math.PI + 90;
 				return "rotate("+angle+", "+d.target.x+", "+d.target.y+")";
 			});
-		d3.selectAll('circle').on('mouseenter', function(d){
-			var currentLiterals = literals[d.name];
-			var tablebody = $("#literalbody");
-			tablebody.empty();
-			$("#literalsubject").html(d.name);
-			if (currentLiterals != undefined){
-				d3.select("#literaltable").style("display", "block");
-				d3.select("#literalmsg").html("")
-				$.each(currentLiterals, function(i, item){
-					language = (item['l'] == "")?"":" <strong>("+item['l']+")</strong>";
-					datatype = (item['d'] == "")?"":"^^<strong>"+item['d']+"</strong>";
-					td = "<tr><td>"+item['p']+"</td><td>"+item['o']+datatype+language+"</td></tr>"
-					tablebody.append($(td))
-				})
-			}else{
-				d3.select("#literaltable").style("display", "none");
-				d3.select("#literalmsg").html("No literals related to this URI")
-			}
-			var x = d3.event.pageX+"px",
-			y = d3.event.pageY+"px";
-			var l = d3.select("#literals");
-			l.style("top", y).style("left", x).style("display", "block");
-		}).on('mouseout', function(d){
-			var l = d3.select("#literals");
-			l.style("display", "none");
+		// d3.selectAll('circle').on('mouseenter', function(d){
+		// 	var currentLiterals = literals[d.name];
+		// 	var tablebody = $("#literalbody");
+		// 	tablebody.empty();
+		// 	$("#literalsubject").html(d.name);
+		// 	if (currentLiterals != undefined){
+		// 		d3.select("#literaltable").style("display", "block");
+		// 		d3.select("#literalmsg").html("")
+		// 		$.each(currentLiterals, function(i, item){
+		// 			language = (item['l'] == "")?"":" <strong>("+item['l']+")</strong>";
+		// 			datatype = (item['d'] == "")?"":"^^<strong>"+item['d']+"</strong>";
+		// 			td = "<tr><td>"+item['p']+"</td><td>"+item['o']+datatype+language+"</td></tr>"
+		// 			tablebody.append($(td))
+		// 		})
+		// 	}else{
+		// 		d3.select("#literaltable").style("display", "none");
+		// 		d3.select("#literalmsg").html("No literals related to this URI")
+		// 	}
+		// 	var x = d3.event.pageX+"px",
+		// 	y = d3.event.pageY+"px";
+		// 	var l = d3.select("#literals");
+		// 	l.style("top", y).style("left", x).style("display", "block");
+		// }).on('mouseout', function(d){
+		// 	var l = d3.select("#literals");
+		// 	l.style("display", "none");
 
-		});
+		// });
 
 	});
 
@@ -317,6 +317,13 @@ function restart(myUrl){
 // 		}
 // 	});
 // }
+d3.select("#submit").on('click', function(){
+	var query = d3.select('#query')[0][0].value;
+	d3.json('/todo/api/v1.0/query?query='+query, function(data){
+		//console.log(data);
+		//alert(data.result);
+		restart(data.result);
 
+	})
+});
 
-restart("http://graves.cl/visualRDF/");
